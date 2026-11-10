@@ -253,7 +253,7 @@ function displayTeam() {
 teamCount.textContent = `${team.length} / 6`;
 teamCountNav.textContent = team.length;
 
-// Card clicks: add, delete, or show details
+
 
 // Remove a Pokémon from the team using event delegation
 if (teamList) {
@@ -476,6 +476,7 @@ if (creatureForm) {
 
     if(searchInput){
       searchInput.value = "";
+
     }
 
     displayFilteredCreatures();
@@ -484,6 +485,7 @@ if (creatureForm) {
     alert("Créature ajoutée avec succès !");
   });
 }
+
 
 // Initial display
 displayCreatures();
