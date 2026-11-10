@@ -1,3 +1,5 @@
+import { addTransitionType } from "react";
+
 const BASE_URL = "https://pokeapi.co/api/v2";
 
 //get the first 20 pokemon
@@ -55,24 +57,32 @@ export async function getPokemonWithDetails() {
 
 
 function formatPokemon(pokemon) {
-    return {
-        id: pokemon.name,
-        name: pokemon.name,
-        type : pokemon.type.name;
-        return item.type.name;
-    },
+    const typeName = {
+         fire: "Feu",
+        water: "Eau",
+        grass: "Plante",
+        electric: "Électrik",
+        ice: "Glace",
+        dark: "Ténèbres"
+    };
+      return {
+        id: `${String(pokemon.id)}.padStart(3,"0")},`
+        name : pokemon.name,
+        type: typeName[pokemon.type[0].type.name] || pokemon.type[0].type.name,
+        level:"Base",
 
-    image : pokemon.spirites.other["official-artwork"].front_default,
-     
-    stats: { 
-        hp: pokemon.stats[0].base_stat,
-        attack : pokemon.stats[1].base_stat,
-        defense: pokemon.stats[2].base_stats
+        status : {
+            hp: pokemon.status[0].nase_stat,
+            attack : pokemon.stats[1].base_stat,
+            defence: pokemon.stats[2].base_stat
+        },
 
+        image : pokemon.spirites.other["official-artwork"].front_default
+         || pokemon.spirites.front_default,
 
+         description:""
+      };
     }
-};
-
-    
+}
 
     
