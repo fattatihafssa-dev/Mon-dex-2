@@ -3,7 +3,7 @@ import { getPokemonWithDetails } from "./services/api.js";
 
  async function init() {
    try {
-        pokemonList = awit getPokemonWithDetails();
+        pokemonList = await getPokemonWithDetails();
 
         console.log(pokemonList);
 

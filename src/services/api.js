@@ -1,10 +1,10 @@
-import { addTransitionType } from "react";
+
 
 const BASE_URL = "https://pokeapi.co/api/v2";
 
 //get the first 20 pokemon
-export async function getPokemonList() {
-    const url = `${BASE_URL}/pokemon?limit=20&offset=0`;
+export async function getPokemonList(offset = 0) {
+const url = `${BASE_URL}/pokemon?limit=20&offset=${offset}`;
       
 
     try {
@@ -37,10 +37,10 @@ export async function getPokemonDetails(url) {
         throw error ;
     }
 } 
-//get the details of one pokemon //
+export async function getPokemonWithDetails(offset = 0) {
+    const data = await getPokemonList(offset)
 
-export async function getPokemonWithDetails() {
-    const data = await getPokemonList();
+
 
     const promises = data.results.map(pokemon => {
         return getPokemonDetails(pokemon.url);
@@ -48,11 +48,11 @@ export async function getPokemonWithDetails() {
 
     const pokemonDetails = await Promise.all(promises);
 
-    const formatPokemon = pokemonDetails.map(pokemon => {
-        return formatPokemon(pokemon);
-    });
+   const formattedPokemon = pokemonDetails.map(pokemon => {
+    return formatPokemon(pokemon);
+});
 
-    return pokemonDetails;
+return formattedPokemon;
 }
 
 
@@ -65,24 +65,21 @@ function formatPokemon(pokemon) {
         ice: "Glace",
         dark: "Ténèbres"
     };
-      return {
-        id: `${String(pokemon.id)}.padStart(3,"0")},`
-        name : pokemon.name,
-        type: typeName[pokemon.type[0].type.name] || pokemon.type[0].type.name,
-        level:"Base",
-
-        status : {
-            hp: pokemon.status[0].nase_stat,
-            attack : pokemon.stats[1].base_stat,
-            defence: pokemon.stats[2].base_stat
-        },
-
-        image : pokemon.spirites.other["official-artwork"].front_default
-         || pokemon.spirites.front_default,
-
-         description:""
-      };
-    }
 }
+      return {
+    id: `#${String(pokemon.id).padStart(3, "0")}`,
+    name: pokemon.name,
+    type: typeName[pokemon.types[0].type.name]
+        || pokemon.types[0].type.name,
 
-    
+    stats: {
+        hp: pokemon.stats[0].base_stat,
+        attack: pokemon.stats[1].base_stat,
+        defence: pokemon.stats[2].base_stat
+    },
+
+    image: pokemon.sprites.other["official-artwork"].front_default
+        || pokemon.sprites.front_default,
+
+    description: ""
+};
