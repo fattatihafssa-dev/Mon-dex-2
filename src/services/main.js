@@ -1,15 +1,21 @@
 import { getPokemonWithDetails } from "./services/api.js";
- let pokemonList = [];
+import { displayPokemon } from "./ui.js";
 
- async function init() {
-   try {
+let pokemonList = [];
+
+async function init() {
+    try {
+        // 1. Fetch Pokémon from the API
         pokemonList = await getPokemonWithDetails();
 
-        console.log(pokemonList);
+        // 2. Display Pokémon cards in the HTML
+        displayPokemon(pokemonList);
 
-   } catch(error)  {
-      console.log("Error loading Pokémon:",error);
-   }
+    } catch (error) {
+        console.error("Error loading Pokémon:", error);
+    }
 }
 
+// 3. Start the application
 init();
+

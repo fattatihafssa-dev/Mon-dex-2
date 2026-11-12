@@ -58,28 +58,35 @@ return formattedPokemon;
 
 function formatPokemon(pokemon) {
     const typeName = {
-         fire: "Feu",
-        water: "Eau",
-        grass: "Plante",
-        electric: "Électrik",
+       
+        fire:"Feu",
+        water:"Eau",
+        grass:"Plante",
+         electric: "Électrik",
         ice: "Glace",
         dark: "Ténèbres"
     };
+
+     return {
+      id: `#${String(pokemon.id).padStart(3, "0")}`,
+      name: pokemon.name,
+
+      type: typeName[pokemon.types[0].type.name]
+            || pokemon.types[0].type.name,
+
+        stats: {
+            hp: pokemon.stats[0].base_stat,
+            attack: pokemon.stats[1].base_stat,
+            defence: pokemon.stats[2].base_stat
+        },
+
+        image : pokemon.spirites.other["official-artwork"].front_default
+            || pokemon.spirites.front_default,
+
+            description:""
+    };
 }
-      return {
-    id: `#${String(pokemon.id).padStart(3, "0")}`,
-    name: pokemon.name,
-    type: typeName[pokemon.types[0].type.name]
-        || pokemon.types[0].type.name,
 
-    stats: {
-        hp: pokemon.stats[0].base_stat,
-        attack: pokemon.stats[1].base_stat,
-        defence: pokemon.stats[2].base_stat
-    },
 
-    image: pokemon.sprites.other["official-artwork"].front_default
-        || pokemon.sprites.front_default,
 
-    description: ""
-};
+
