@@ -1,92 +1,90 @@
+import { getPokemonWithDetails } from "./services/api.js";
+import {displayPokemon} from "../ui.js";
 
+let pokemonList = [];
+let offset = 0 ;
 
-const BASE_URL = "https://pokeapi.co/api/v2";
+const loadMoreButton = document.getElementById("load-more");
+ const typeSelect = document.getElementById("type")
+ const searchInput = document.getElementById("search");
 
-//get the first 20 pokemon
-export async function getPokemonList(offset = 0) {
-const url = `${BASE_URL}/pokemon?limit=20&offset=${offset}`;
-      
-
+async function init () {
     try {
-        const response = await fetch(url);
+        pokemonList = await getPokemonWithDetails();
 
-        if (!response.ok) {
-            throw new Error("Failed to fetch Pokemon");
+        console.log(pokemonList);
 
-        }
-        const data = await response.json();
+        displayPokemon(pokemonList);
 
-        return data;
+    }  catch (error) {
+        console.error("Error loading Pokémon:", error);
+
+    }
+}  
+//starting the app////
+init ();
+
+if(loadMoreButton) {
+
+
+loadMoreButton.addEventListenner("click", async function(){
+    try {
+        offset += 20 ; 
+        const newPokemon = await getPokemonWithDetails(offset);
+
+        // this combin the excited pokemon in the web with the added pokemon////
+
+        pokemonList = [...pokemonList,...newPokemon];
+
+        displayPokemon(pokemonList);
 
     } catch (error) {
-        console.error(error);
-        throw error;
+        console.error("Error loading more pokémon:",error);
+        offset -= 20 ; 
     }
-}
-
-export async function getPokemonDetails(url) {
-    try {
-        const response = await fetch(url);
-        if(!response.ok) {
-            throw new Error ("failed to fetch Pokemon details")
-        }
-            const data = await response.json();
-            return data ;
-        } catch (error) {
-        console.error(error);
-        throw error ;
-    }
-} 
-export async function getPokemonWithDetails(offset = 0) {
-    const data = await getPokemonList(offset)
-
-
-
-    const promises = data.results.map(pokemon => {
-        return getPokemonDetails(pokemon.url);
-    });
-
-    const pokemonDetails = await Promise.all(promises);
-
-   const formattedPokemon = pokemonDetails.map(pokemon => {
-    return formatPokemon(pokemon);
 });
-
-return formattedPokemon;
 }
 
 
-function formatPokemon(pokemon) {
-    const typeName = {
-       
-        fire:"Feu",
-        water:"Eau",
-        grass:"Plante",
-         electric: "Électrik",
-        ice: "Glace",
-        dark: "Ténèbres"
-    };
+function filterPokemon() {
 
-     return {
-      id: `#${String(pokemon.id).padStart(3, "0")}`,
-      name: pokemon.name,
+    const searchText = searchInput 
+    ? searchInput.value.trim().toLowerCase()
+    :"";   
 
-      type: typeName[pokemon.types[0].type.name]
-            || pokemon.types[0].type.name,
+    const type = typeSelect
+    ? typeSelect.value
+    :"Tous";
 
-        stats: {
-            hp: pokemon.stats[0].base_stat,
-            attack: pokemon.stats[1].base_stat,
-            defence: pokemon.stats[2].base_stat
-        },
+     const filteredPokemon = pokemonList.filter(function(pokemon)  {
 
-        image : pokemon.sprites.other["official-artwork"].front_default
-            || pokemon.sprites.front_default,
+        const matchesName = pokemon.name.toLowerCase().includes(searchText);
+        const matchesType = type === "Tous" || pokemon.type === type ;
 
-            description:""
-    };
-}  
+        return matchesName && matchesType ;
 
+     });
 
+       displayPokemon(filteredPokemon); 
 
+    }
 
+    if (searchInput) {
+        filters.addEventListenner("click", function(event)  {
+
+         const button = event.target.closest("button");
+
+          if(!button || filter.contains(button)) {
+            return;
+          }  
+
+           selectedType = button.textContent.trim();
+           displayFilteredCreatures();
+        });
+    }
+
+    if (searchInput) {
+  searchInput.addEventListener("input", function() {
+    displayFilteredCreatures();
+  });
+}

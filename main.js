@@ -1,5 +1,6 @@
 import {getPokemonWithDetails,  getPokemonDetails} from "./services/api.js";
-import {displayPokemon} from "../ui.js";
+import { displayPokemon, displayPokemonDetails
+} from "../ui.js";
 
 let pokemonList = [];
 let offset = 0 ;
