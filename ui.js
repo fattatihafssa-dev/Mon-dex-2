@@ -1,116 +1,110 @@
 
 const grid = document.getElementById("grid");
 
-// Detail elements
-const detailNumber = document.getElementById("detail-number");
-const detailName = document.getElementById("detail-name");
-const detailImage = document.getElementById("detail-image");
-const detailType = document.getElementById("detail-type");
+// Translate Pokémon types into French
+function translateType(type) {
 
-const detailHp = document.getElementById("detail-hp");
-const detailAttack = document.getElementById("detail-attack");
-const detailDefence = document.getElementById("detail-defence");
+    const types = {
+        normal: "Normal",
+        fire: "Feu",
+        water: "Eau",
+        electric: "Électrik",
+        grass: "Plante",
+        ice: "Glace",
+        fighting: "Combat",
+        poison: "Poison",
+        ground: "Sol",
+        flying: "Vol",
+        psychic: "Psy",
+        bug: "Insecte",
+        rock: "Roche",
+        ghost: "Spectre",
+        dragon: "Dragon",
+        dark: "Ténèbres",
+        steel: "Acier",
+        fairy: "Fée"
+    };
 
-const detailHpBar = document.getElementById("detail-hp-bar");
-const detailAttackBar = document.getElementById("detail-attack-bar");
-const detailDefenceBar = document.getElementById("detail-defence-bar");
+    return types[type] || type;
+}
 
-const detailHeight = document.getElementById("detail-height");
-
-
-export function displayPokemon(pokemonList) {
+// Display Pokémon cards
+export function displayCreatures(list, append = false) {
 
     if (!grid) return;
 
-    if (pokemonList.length === 0) {
-        grid.innerHTML = "<p>Aucun Pokémon trouvé.</p>";
+    if (!append) {
+        grid.innerHTML = "";
+    }
+
+    if (list.length === 0 && !append) {
+        grid.innerHTML = `
+            <p class="col-span-full text-center text-muted">
+                Aucun Pokémon trouvé.
+            </p>
+        `;
         return;
     }
 
-    grid.innerHTML = pokemonList.map(function(pokemon) {
+    const cards = list.map(creature => {
+
+        const total =
+            creature.stats.hp +
+            creature.stats.attack +
+            creature.stats.defence;
 
         return `
             <article
-                data-id="${pokemon.id}"
-                tabindex="0"
-                role="button"
-                aria-label="Voir les détails de ${pokemon.name}"
-                class="cursor-pointer rounded-xl bg-white p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg"
+                data-id="${creature.id}"
+                class="creature-card flex min-w-0 cursor-pointer flex-col gap-4 rounded-card bg-white p-4 pb-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
 
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-muted">${pokemon.id}</span>
-                    <span class="rounded-full bg-brand-light px-3 py-1 text-sm">
-                        ${pokemon.type}
+                <div class="relative flex h-32 items-center justify-center overflow-hidden rounded-xl bg-brand-light">
+
+                    <span class="absolute left-3 top-2 font-mono text-sm text-muted">
+                        ${creature.id}
                     </span>
+
+                    <img
+                        src="${creature.image}"
+                        alt="${creature.name}"
+                        class="h-24 w-24 object-contain"
+                        loading="lazy"
+                    >
+
                 </div>
 
-                <img
-                    src="${pokemon.image || ""}"
-                    alt="${pokemon.name}"
-                    class="mx-auto h-40 w-full object-contain"
+                <div class="flex flex-col gap-2">
+
+                    <h3 class="font-display text-xl font-semibold capitalize">
+                        ${creature.name}
+                    </h3>
+
+                    <span class="w-fit rounded-full bg-brand-light px-3 py-1 text-sm font-bold text-ink capitalize">
+                        ${translateType(creature.type)}
+                    </span>
+
+                    <p class="text-sm text-muted">
+                        Total ${total}
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="add-to-team btn-outline"
+                    data-id="${creature.id}"
                 >
-
-                <h2 class="text-center text-xl font-bold capitalize">
-                    ${pokemon.name}
-                </h2>
-
-                <div class="mt-3 flex justify-around text-sm">
-                    <span>HP: ${pokemon.stats.hp}</span>
-                    <span>ATK: ${pokemon.stats.attack}</span>
-                    <span>DEF: ${pokemon.stats.defence}</span>
-                </div>
+                    Ajouter à l'équipe
+                </button>
 
             </article>
         `;
-
     }).join("");
-}
 
-
-
-export function displayPokemonDetails(pokemon) {
-
-    if (!detailName || !detailImage) return;
-
-    const image =
-        pokemon.sprites.other["official-artwork"].front_default ||
-        pokemon.sprites.front_default;
-
-    detailNumber.textContent =
-        `#${String(pokemon.id).padStart(3, "0")}`;
-
-    detailName.textContent = pokemon.name;
-
-    detailImage.innerHTML = `
-        <img
-            src="${image || ""}"
-            alt="${pokemon.name}"
-            class="h-full w-full object-contain"
-        >
-    `;
-
-    detailType.textContent = pokemon.types
-        .map(function(type) {
-            return type.type.name;
-        })
-        .join(" / ");
-
-    const hp = pokemon.stats[0].base_stat;
-    const attack = pokemon.stats[1].base_stat;
-    const defence = pokemon.stats[2].base_stat;
-
-    detailHp.textContent = hp;
-    detailAttack.textContent = attack;
-    detailDefence.textContent = defence;
-
-
-    detailHpBar.style.width = `${Math.min(hp / 255 * 100, 100)}%`;
-    detailAttackBar.style.width = `${Math.min(attack / 255 * 100, 100)}%`;
-    detailDefenceBar.style.width = `${Math.min(defence / 255 * 100, 100)}%`;
-
-
-    if (detailHeight) {
-        detailHeight.textContent = `${pokemon.height / 10} m`;
+    if (append) {
+        grid.insertAdjacentHTML("beforeend", cards);
+    } else {
+        grid.innerHTML = cards;
     }
 }

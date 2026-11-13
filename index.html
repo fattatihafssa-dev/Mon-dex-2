@@ -53,6 +53,23 @@
       <!-- ===================== GRILLE DES CRÉATURES ===================== -->
    <section id="grid" aria-label="Créatures"
   class="grid w-full min-w-0 grid-cols-2 gap-6 md:grid-cols-3"></section>
+
+<p id="api-status" class="text-center text-muted"></p>
+
+
+<div class="flex justify-center py-6">
+
+    <button
+        type="button"
+        id="load-more"
+        class="btn-primary px-8"
+    >
+        Afficher plus
+    </button>
+
+</div>
+
+
         <!-- ===================== PANNEAU DE DÉTAIL ===================== -->
         <section id="detail"
         aria-label="Détail de la créature"
@@ -73,7 +90,6 @@
          
 <div class="flex flex-col gap-2 text-sm">
 
-  <!-- PV -->
   <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
     <span class="font-bold">PV</span>
     <span class="h-3 rounded-full bg-ground">
@@ -82,7 +98,7 @@
     <span id="detail-hp" class="text-right font-mono">45</span>
   </div>
 
-  <!-- Attaque -->
+ 
   <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
     <span class="font-bold">Attaque</span>
     <span class="h-3 rounded-full bg-ground">
@@ -91,7 +107,7 @@
     <span id="detail-attack" class="text-right font-mono">49</span>
   </div>
 
-  <!-- Défense -->
+ 
   <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2">
     <span class="font-bold">Défense</span>
     <span class="h-3 rounded-full bg-ground">
@@ -284,6 +300,6 @@
      de fans réalisé dans le cadre d'une formation.
   </footer>
 
-<script type="module" src="./js/main.js"></script>
+<script type="module" src="./main.js"></script>
 </body>
 </html>

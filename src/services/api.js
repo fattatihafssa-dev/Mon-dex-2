@@ -1,90 +1,61 @@
-import { getPokemonWithDetails } from "./services/api.js";
-import {displayPokemon} from "../ui.js";
 
-let pokemonList = [];
-let offset = 0 ;
+const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 
-const loadMoreButton = document.getElementById("load-more");
- const typeSelect = document.getElementById("type")
- const searchInput = document.getElementById("search");
+export async function getPokemonWithDetails(offset = 0, limit = 20) {
 
-async function init () {
-    try {
-        pokemonList = await getPokemonWithDetails();
+    // 1. Fetch Pokémon list
+    const response = await fetch(
+        `${BASE_URL}?limit=${limit}&offset=${offset}`
+    );
 
-        console.log(pokemonList);
-
-        displayPokemon(pokemonList);
-
-    }  catch (error) {
-        console.error("Error loading Pokémon:", error);
-
-    }
-}  
-//starting the app////
-init ();
-
-if(loadMoreButton) {
-
-
-loadMoreButton.addEventListenner("click", async function(){
-    try {
-        offset += 20 ; 
-        const newPokemon = await getPokemonWithDetails(offset);
-
-        // this combin the excited pokemon in the web with the added pokemon////
-
-        pokemonList = [...pokemonList,...newPokemon];
-
-        displayPokemon(pokemonList);
-
-    } catch (error) {
-        console.error("Error loading more pokémon:",error);
-        offset -= 20 ; 
-    }
-});
-}
-
-
-function filterPokemon() {
-
-    const searchText = searchInput 
-    ? searchInput.value.trim().toLowerCase()
-    :"";   
-
-    const type = typeSelect
-    ? typeSelect.value
-    :"Tous";
-
-     const filteredPokemon = pokemonList.filter(function(pokemon)  {
-
-        const matchesName = pokemon.name.toLowerCase().includes(searchText);
-        const matchesType = type === "Tous" || pokemon.type === type ;
-
-        return matchesName && matchesType ;
-
-     });
-
-       displayPokemon(filteredPokemon); 
-
+    if (!response.ok) {
+        throw new Error(`Pokémon list error: ${response.status}`);
     }
 
-    if (searchInput) {
-        filters.addEventListenner("click", function(event)  {
+    const data = await response.json();
 
-         const button = event.target.closest("button");
+    // 2. Fetch Pokémon details
+    const promises = data.results.map(async (pokemon) => {
 
-          if(!button || filter.contains(button)) {
-            return;
-          }  
+        const response = await fetch(pokemon.url);
 
-           selectedType = button.textContent.trim();
-           displayFilteredCreatures();
-        });
-    }
+        if (!response.ok) {
+            throw new Error(`Pokémon details error: ${response.status}`);
+        }
 
-    if (searchInput) {
-  searchInput.addEventListener("input", function() {
-    displayFilteredCreatures();
-  });
+        return response.json();
+    });
+
+    const pokemonDetails = await Promise.all(promises);
+
+    // 3. Convert API data into our card format
+    return pokemonDetails.map(pokemon => {
+
+        const getStat = (name) => {
+            const stat = pokemon.stats.find(
+                item => item.stat.name === name
+            );
+
+            return stat ? stat.base_stat : 0;
+        };
+
+        const image =
+            pokemon.sprites.other?.["official-artwork"]?.front_default ||
+            pokemon.sprites.front_default ||
+            "";
+
+        return {
+            id: `#${String(pokemon.id).padStart(3, "0")}`,
+            name: pokemon.name,
+            type: pokemon.types[0]?.type.name || "unknown",
+            level: "API",
+            image: image,
+
+            stats: {
+                hp: getStat("hp"),
+                attack: getStat("attack"),
+                defence: getStat("defense")
+            }
+        };
+    });
 }
