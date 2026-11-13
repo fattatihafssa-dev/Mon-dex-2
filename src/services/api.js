@@ -80,12 +80,12 @@ function formatPokemon(pokemon) {
             defence: pokemon.stats[2].base_stat
         },
 
-        image : pokemon.spirites.other["official-artwork"].front_default
-            || pokemon.spirites.front_default,
+        image : pokemon.sprites.other["official-artwork"].front_default
+            || pokemon.sprites.front_default,
 
             description:""
     };
-}
+}  
 
 
 
