@@ -1,4 +1,4 @@
-import { getPokemonWithDetails } from "./services/api.js";
+import {getPokemonWithDetails,  getPokemonDetails} from "./services/api.js";
 import {displayPokemon} from "../ui.js";
 
 let pokemonList = [];
@@ -7,6 +7,7 @@ let offset = 0 ;
 const loadMoreButton = document.getElementById("load-more");
  const typeSelect = document.getElementById("type")
  const searchInput = document.getElementById("search");
+ const pokemonGrid = document.getElementById("grid")
 
 async function init () {
     try {
@@ -89,25 +90,55 @@ function filterPokemon() {
   });
 }
 
+if (typeSelect) {
+    typeSelect.addEventListener("change", filterPokemon);
+}  
+
+
+     async function showPokemonDetails(event) {
+
+        const card = event.target.closest("[data-id]")
+
+                if(!card) {
+                    return;
+                
+                }
+ 
+        const pokemon = pokemonList.find(function(pokemon) {
+            return pokemon.id === card.dataset.id ;
+
+        });
+
+         if(!pokemon) {
+            return;
+
+        }
+
+          try {
+            const pokemonId = pokemon.id.replace("#" ,"");
+
+            const details = await getPokemonDetails (
+                  `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
+
+            );
+
+            console.log("selected Pokemon details:",details);
+
+            displayPokemonDetails(details);
+
+        } catch (error) {
+            console.error("Error loading Pokemon details:", error );
+
+        }
+    }
+
+    if(pokemonGrid) {
+
+        pokemonGrid.addEventListener("click",showPokemonDetails);
+    }
+
+
 
         
 
-    
-
-
-
-
-
-
-   
-
-
-
-
-       
-
-
-
-
-
- 
+     
