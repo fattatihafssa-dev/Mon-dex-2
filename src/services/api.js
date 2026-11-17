@@ -1,5 +1,5 @@
 
-const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
+const BASE_URL = "http://localhost:3000";
 
 export async function getPokemonWithDetails(offset = 0, limit = 20) {
 
@@ -59,3 +59,75 @@ export async function getPokemonWithDetails(offset = 0, limit = 20) {
         };
     });
 }
+
+
+
+const BASE_URL = "http://localhost:3000";
+
+// Main request function
+export async function request(method, route, body = null) {
+
+    const options = {
+        method: method,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    };
+
+    if (body !== null) {
+        options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(`${BASE_URL}${route}`, options);
+
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+    }
+
+    if (response.status === 204) {
+        return null;
+    }
+
+    return await response.json();
+}
+
+
+// Get all creatures with search and filters
+export async function getCreatures(params = {}) {
+
+    const query = new URLSearchParams(params).toString();
+
+    const route = query
+        ? `/creatures?${query}`
+        : "/creatures";
+
+    return request("GET", route);
+}
+
+
+
+export async function getCreature(id) {
+    return request("GET", `/creatures/${id}`);
+}
+
+
+
+export async function createCreature(data) {
+    return request("POST", "/creatures", data);
+}
+
+
+export async function updateCreature(id, data) {
+    return request("PUT", `/creatures/${id}`, data);
+}
+
+
+
+export async function deleteCreature(id) {
+    return request("DELETE", `/creatures/${id}`);
+}
+
+
+     
+
+

@@ -1,6 +1,18 @@
 
 import { getPokemonWithDetails } from "./services/api.js";
 import { displayCreatures } from "./ui.js";
+import { getCreatures } from "./api.js";
+
+import {
+    saveFilter,
+    getFilter
+} from "./storage.js";
+
+import {
+    renderCreatures,
+    showMessage
+} from "./ui.js";
+
 
 // =====================================
 // APPLICATION DATA
@@ -559,3 +571,61 @@ if (creatureForm) {
 
 displayTeam();
 loadPokemon();
+
+
+const searchInput = document.getElementById("search");
+const typeFilter = document.getElementById("type-filter");
+
+
+// Load creatures from API
+async function loadCreatures() {
+
+    try {
+
+        showMessage("Chargement...");
+
+        const params = {};
+
+        const search = searchInput.value.trim();
+        const type = typeFilter.value;
+
+        if (search) {
+            params.q = search;
+        }
+
+        if (type !== "Tous") {
+            params.type = type;
+        }
+
+        const creatures = await getCreatures(params);
+
+        renderCreatures(creatures);
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Impossible de charger les créatures. Vérifiez que json-server fonctionne."
+        );
+    }
+}
+
+searchInput.addEventListener("input", () => {
+    loadCreatures();
+});
+
+
+
+typeFilter.addEventListener("change", () => {
+
+    saveFilter(typeFilter.value);
+
+    loadCreatures();
+});
+
+
+typeFilter.value = getFilter();
+
+
+loadCreatures();

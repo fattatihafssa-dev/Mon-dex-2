@@ -1,5 +1,6 @@
 
 const grid = document.getElementById("grid");
+const message = document.getElementById("message");
 
 // Translate Pokémon types into French
 function translateType(type) {
@@ -107,4 +108,5 @@ export function displayCreatures(list, append = false) {
     } else {
         grid.innerHTML = cards;
     }
+
 }
